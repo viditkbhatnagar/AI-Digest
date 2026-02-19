@@ -38,7 +38,7 @@ export async function generateMetadata({
 
   return {
     title: entry.name,
-    description: `${ENTITY_TYPE_LABELS[entry.type as EntityType]} in the AI Pulse knowledge base`,
+    description: `${ENTITY_TYPE_LABELS[entry.type as EntityType]} in the AI Digest knowledge base`,
   };
 }
 

@@ -28,7 +28,7 @@ export function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-2 px-6 py-5 border-b border-border">
         <Zap className="w-6 h-6 text-accent" />
-        <span className="text-lg font-bold text-foreground">AI Pulse</span>
+        <span className="text-lg font-bold text-foreground">AI Digest</span>
       </div>
 
       {/* Navigation */}

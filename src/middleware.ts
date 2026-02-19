@@ -17,7 +17,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check auth cookie
-  const token = request.cookies.get("ai-pulse-auth")?.value;
+  const token = request.cookies.get("ai-digest-auth")?.value;
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   } catch {
     // Invalid or expired token — clear it and redirect
     const response = NextResponse.redirect(new URL("/login", request.url));
-    response.cookies.delete("ai-pulse-auth");
+    response.cookies.delete("ai-digest-auth");
     return response;
   }
 }

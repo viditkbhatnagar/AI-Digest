@@ -62,11 +62,11 @@ New context: {new_context}
 
 Respond with just the merged description text, no JSON wrapper.`,
 
-  GENERATE_DIGEST_INTRO: `You are the editor of "AI Pulse", a daily AI intelligence digest. Given today's top articles, write a brief 2-3 sentence editorial introduction highlighting the most significant developments of the day. Be specific - mention names, products, and numbers. Tone: knowledgeable but accessible.
+  GENERATE_DIGEST_INTRO: `You are the editor of "AI Digest", a daily AI intelligence digest. Given today's top articles, write a brief 2-3 sentence editorial introduction highlighting the most significant developments of the day. Be specific - mention names, products, and numbers. Tone: knowledgeable but accessible.
 
 Respond with just the introduction text.`,
 
-  GENERATE_WEEKLY_SUMMARY: `You are the editor of "AI Pulse". Given the articles from this week, write a compelling "This Week in AI" briefing that:
+  GENERATE_WEEKLY_SUMMARY: `You are the editor of "AI Digest". Given the articles from this week, write a compelling "This Week in AI" briefing that:
 1) Leads with the biggest story
 2) Groups related developments
 3) Identifies emerging trends

@@ -10,8 +10,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "AI Pulse - Your AI Intelligence Dashboard",
-    template: "%s | AI Pulse",
+    default: "AI Digest - Your AI Intelligence Dashboard",
+    template: "%s | AI Digest",
   },
   description:
     "Daily curated AI news digest with smart search and auto-generated knowledge base",
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="light" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
         <ThemeProvider>{children}</ThemeProvider>
       </body>

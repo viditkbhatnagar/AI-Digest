@@ -18,9 +18,9 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "dark",
+  theme: "light",
   setTheme: () => {},
-  resolvedTheme: "dark",
+  resolvedTheme: "light",
 });
 
 export function useTheme() {
@@ -42,11 +42,11 @@ function subscribeThemeStore(callback: () => void) {
 }
 
 function getThemeSnapshot(): Theme {
-  return (localStorage.getItem("ai-pulse-theme") as Theme) || "dark";
+  return (localStorage.getItem("ai-digest-theme") as Theme) || "light";
 }
 
 function getThemeServerSnapshot(): Theme {
-  return "dark";
+  return "light";
 }
 
 // --- System theme preference store ---
@@ -63,7 +63,7 @@ function getSystemThemeSnapshot(): "dark" | "light" {
 }
 
 function getSystemThemeServerSnapshot(): "dark" | "light" {
-  return "dark";
+  return "light";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -89,7 +89,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [resolvedTheme]);
 
   const setTheme = useCallback((newTheme: Theme) => {
-    localStorage.setItem("ai-pulse-theme", newTheme);
+    localStorage.setItem("ai-digest-theme", newTheme);
     emitThemeChange();
   }, []);
 
