@@ -4,7 +4,7 @@ import sourcesConfigJson from "./sources-config.json";
 
 // Single rss-parser instance (stateless, reusable)
 const rssParser = new Parser({
-  timeout: 15000,
+  timeout: 8000,
   headers: {
     Accept:
       "application/rss+xml, application/atom+xml, application/xml, text/xml",
@@ -56,7 +56,7 @@ async function fetchArXiv(source: SourceConfig): Promise<RawFeedItem[]> {
 
 async function fetchHackerNews(source: SourceConfig): Promise<RawFeedItem[]> {
   const response = await fetch(source.url, {
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) throw new Error(`HN fetch failed: ${response.status}`);
   const data = await response.json();
@@ -79,7 +79,7 @@ async function fetchHackerNews(source: SourceConfig): Promise<RawFeedItem[]> {
 async function fetchReddit(source: SourceConfig): Promise<RawFeedItem[]> {
   const response = await fetch(source.url, {
     headers: { "User-Agent": "AI-Pulse/1.0 (news aggregator)" },
-    signal: AbortSignal.timeout(15000),
+    signal: AbortSignal.timeout(8000),
   });
   if (!response.ok) throw new Error(`Reddit fetch failed: ${response.status}`);
   const data = await response.json();
@@ -136,13 +136,16 @@ export async function fetchSource(
 
 const MAX_CONSECUTIVE_ERRORS = 5;
 
+const SOURCE_FETCH_TIMEOUT_MS = 15000;
+
 export async function fetchAllSources(): Promise<RawFeedItem[]> {
   const enabledSources = getEnabledSources();
   console.log(
     `[sources] Fetching from ${enabledSources.length} enabled sources...`
   );
 
-  const results = await Promise.allSettled(
+  // Race all sources against an overall timeout so slow feeds don't block
+  const sourceFetches = Promise.allSettled(
     enabledSources.map(async (source) => {
       if (source.errorCount >= MAX_CONSECUTIVE_ERRORS) {
         console.warn(
@@ -155,6 +158,16 @@ export async function fetchAllSources(): Promise<RawFeedItem[]> {
       return items;
     })
   );
+
+  const timeout = new Promise<PromiseSettledResult<RawFeedItem[]>[]>(
+    (resolve) =>
+      setTimeout(() => {
+        console.warn(`[sources] Overall fetch timeout (${SOURCE_FETCH_TIMEOUT_MS}ms) — using results so far`);
+        resolve([]);
+      }, SOURCE_FETCH_TIMEOUT_MS)
+  );
+
+  const results = await Promise.race([sourceFetches, timeout]);
 
   const allItems: RawFeedItem[] = [];
   let successCount = 0;

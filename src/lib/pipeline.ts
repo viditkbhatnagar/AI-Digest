@@ -321,36 +321,10 @@ export async function runDailyDigest(): Promise<PipelineResult> {
 
   console.log(`[pipeline] Stored ${articlesStored} articles`);
 
-  // Step 8: Extract entities (only for high-importance articles)
-  let entitiesExtracted = 0;
-  if (insertedArticleIds.size > 0) {
-    const articlesForEntities = summarized
-      .filter(
-        (a) =>
-          a.importance_score >= ENTITY_IMPORTANCE_THRESHOLD &&
-          insertedArticleIds.has(a.url)
-      )
-      .slice(0, MAX_ENTITY_EXTRACTION_ARTICLES)
-      .map((a) => ({
-        id: insertedArticleIds.get(a.url)!,
-        title: a.title,
-        ai_summary: a.ai_summary,
-        url: a.url,
-        source_name: a.source_name,
-      }));
-
-    console.log(
-      `[pipeline] Running entity extraction on ${articlesForEntities.length} articles (importance >= ${ENTITY_IMPORTANCE_THRESHOLD})`
-    );
-
-    try {
-      entitiesExtracted = await processEntities(articlesForEntities);
-    } catch (error) {
-      const msg = `Entity extraction failed: ${error instanceof Error ? error.message : error}`;
-      console.error(`[pipeline] ${msg}`);
-      errors.push(msg);
-    }
-  }
+  // Step 8: Entity extraction — skipped in daily runs (too slow for serverless).
+  // Entities are extracted during the weekly enrichment pipeline instead.
+  const entitiesExtracted = 0;
+  console.log(`[pipeline] Entity extraction deferred to weekly run`);
 
   // Step 9: Create digest record
   const topStoryUrl = summarized[0]?.url;
