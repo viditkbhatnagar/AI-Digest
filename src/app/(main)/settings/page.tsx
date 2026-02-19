@@ -292,8 +292,8 @@ export default function SettingsPage() {
             Entity Extraction
           </h3>
           <p className="text-sm text-muted mb-3">
-            Extract entities from articles into the knowledge base. Processes 3
-            articles per batch to stay within serverless time limits.
+            Extract entities from articles into the knowledge base. Processes 1
+            article per batch to stay within serverless time limits.
             {entityPending != null && entityPending > 0 && (
               <span className="ml-1 font-medium text-accent">
                 {entityPending} articles pending.

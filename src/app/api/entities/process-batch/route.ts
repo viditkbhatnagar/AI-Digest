@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminSupabaseClient } from "@/lib/supabase";
 import { processEntities } from "@/lib/entity-extraction";
 
-const BATCH_SIZE = 3;
+const BATCH_SIZE = 1;
 const IMPORTANCE_THRESHOLD = 6;
 
 function verifyCronSecret(request: NextRequest): boolean {
