@@ -89,6 +89,11 @@ export default function SettingsPage() {
           `Processing... ${totalEntities} entities from ${totalProcessed} articles (${result.remaining} remaining)`
         );
 
+        // Refresh KB stats every 5 articles so the counter updates live
+        if (totalProcessed % 5 === 0) {
+          fetchStats().then(setStats).catch(console.error);
+        }
+
         // Check if user requested stop
         if (entityStopRequested) {
           setEntityProgress(
