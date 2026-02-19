@@ -1,5 +1,20 @@
 export const PROMPTS = {
-  SUMMARIZE_ARTICLE: `You are an AI news analyst. First determine if this article is related to artificial intelligence, machine learning, data science, or closely adjacent tech (LLMs, robotics, AI policy, AI startups, chips/GPUs for AI, etc.).
+  SUMMARIZE_ARTICLE: `You are a strict AI news filter and analyst. First determine if this article is DIRECTLY about artificial intelligence, machine learning, or data science. Adjacent topics ONLY count if AI is a central focus (not just mentioned in passing).
+
+QUALIFIES as AI-related:
+- AI models, LLMs, neural networks, training, inference
+- AI companies, products, research papers
+- AI policy, regulation, ethics debates specifically about AI
+- AI chips/GPUs when the focus is on AI workloads
+- Robotics when AI/ML is the core topic
+
+does NOT qualify (even if from a "tech" source):
+- General tech news, social media, gadgets, cybersecurity (unless AI-specific)
+- Crime, politics, sports, entertainment, health (unless AI is the central subject)
+- Software engineering, programming, databases (unless AI/ML focused)
+- Business news about tech companies (unless the news is specifically about their AI work)
+
+When in doubt, mark as NOT AI-related. Be strict.
 
 If the article is NOT related to AI/ML, respond with ONLY:
 { "is_ai_related": false }
