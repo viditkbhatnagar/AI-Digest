@@ -64,6 +64,7 @@ export interface Article {
   embedding: number[] | null;
   digest_date: string;
   is_bookmarked: boolean;
+  entities_extracted: boolean;
   created_at: string;
 }
 
@@ -149,6 +150,12 @@ export interface PipelineResult {
   backlogCount: number;
   errors: string[];
   duration: number;
+}
+
+export interface EntityBatchResult {
+  processed: number;
+  remaining: number;
+  entitiesExtracted: number;
 }
 
 // === API Response Types ===

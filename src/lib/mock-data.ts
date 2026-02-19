@@ -40,6 +40,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-19",
     is_bookmarked: true,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
   {
@@ -62,6 +63,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-19",
     is_bookmarked: false,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
   {
@@ -84,6 +86,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-19",
     is_bookmarked: true,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
   {
@@ -106,6 +109,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-19",
     is_bookmarked: false,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
   {
@@ -128,6 +132,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-19",
     is_bookmarked: false,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
   {
@@ -150,6 +155,7 @@ export const MOCK_ARTICLES: Article[] = [
     embedding: null,
     digest_date: "2026-02-17",
     is_bookmarked: false,
+    entities_extracted: false,
     created_at: "2026-02-19T08:00:00Z",
   },
 ];

@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
-import { LogOut, CheckCircle, Loader2, Play, AlertCircle } from "lucide-react";
+import { LogOut, CheckCircle, Loader2, Play, AlertCircle, Zap, Square } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/theme-provider";
 import sourcesConfig from "@/lib/sources-config.json";
 import type { SourceType, StatsResponse } from "@/lib/types";
-import { fetchStats, triggerPipeline } from "@/lib/api";
+import { fetchStats, triggerPipeline, processEntityBatch, fetchPendingEntityCount } from "@/lib/api";
 import { cn, formatShortDate } from "@/lib/utils";
 
 const SOURCE_TYPE_ORDER: SourceType[] = [
@@ -27,9 +27,16 @@ export default function SettingsPage() {
   const [stats, setStats] = useState<StatsResponse | null>(null);
   const [pipelineRunning, setPipelineRunning] = useState(false);
   const [pipelineResult, setPipelineResult] = useState<string | null>(null);
+  const [entityPending, setEntityPending] = useState<number | null>(null);
+  const [entityRunning, setEntityRunning] = useState(false);
+  const [entityProgress, setEntityProgress] = useState<string | null>(null);
+  const [entityStopRequested, setEntityStopRequested] = useState(false);
 
   useEffect(() => {
     fetchStats().then(setStats).catch(console.error);
+    fetchPendingEntityCount()
+      .then((r) => setEntityPending(r.pending))
+      .catch(console.error);
   }, []);
 
   function isSourceEnabled(index: number): boolean {
@@ -51,6 +58,56 @@ export default function SettingsPage() {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
+  }
+
+  async function handleExtractEntities() {
+    setEntityRunning(true);
+    setEntityProgress(null);
+    setEntityStopRequested(false);
+    let totalProcessed = 0;
+    let totalEntities = 0;
+
+    try {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const result = await processEntityBatch();
+        totalProcessed += result.processed;
+        totalEntities += result.entitiesExtracted;
+
+        if (result.processed === 0 || result.remaining === 0) {
+          setEntityPending(0);
+          setEntityProgress(
+            totalProcessed > 0
+              ? `Done! Extracted ${totalEntities} entities from ${totalProcessed} articles`
+              : "No articles pending entity extraction"
+          );
+          break;
+        }
+
+        setEntityPending(result.remaining);
+        setEntityProgress(
+          `Processing... ${totalEntities} entities from ${totalProcessed} articles (${result.remaining} remaining)`
+        );
+
+        // Check if user requested stop
+        if (entityStopRequested) {
+          setEntityProgress(
+            `Stopped. Extracted ${totalEntities} entities from ${totalProcessed} articles (${result.remaining} remaining)`
+          );
+          break;
+        }
+      }
+
+      // Refresh stats
+      const newStats = await fetchStats();
+      setStats(newStats);
+    } catch (e) {
+      setEntityProgress(
+        `Failed after ${totalProcessed} articles: ${e instanceof Error ? e.message : "Unknown error"}`
+      );
+    } finally {
+      setEntityRunning(false);
+    }
   }
 
   async function handleRunPipeline() {
@@ -227,6 +284,77 @@ export default function SettingsPage() {
               </p>
             </div>
           </div>
+        </section>
+
+        {/* Entity Extraction */}
+        <section className="bg-surface rounded-xl p-5 border border-border">
+          <h3 className="text-sm font-semibold text-foreground mb-1">
+            Entity Extraction
+          </h3>
+          <p className="text-sm text-muted mb-3">
+            Extract entities from articles into the knowledge base. Processes 3
+            articles per batch to stay within serverless time limits.
+            {entityPending != null && entityPending > 0 && (
+              <span className="ml-1 font-medium text-accent">
+                {entityPending} articles pending.
+              </span>
+            )}
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={handleExtractEntities}
+              disabled={entityRunning || entityPending === 0}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2 text-sm rounded-lg transition-colors",
+                entityRunning || entityPending === 0
+                  ? "bg-accent/50 text-white cursor-not-allowed"
+                  : "bg-accent text-white hover:bg-accent/90"
+              )}
+            >
+              {entityRunning ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Zap className="w-4 h-4" />
+              )}
+              {entityRunning
+                ? "Extracting..."
+                : entityPending === 0
+                  ? "No Pending Articles"
+                  : "Extract Entities"}
+            </button>
+            {entityRunning && (
+              <button
+                onClick={() => setEntityStopRequested(true)}
+                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg border border-border text-muted hover:text-foreground hover:bg-surface-hover transition-colors"
+              >
+                <Square className="w-3.5 h-3.5" />
+                Stop
+              </button>
+            )}
+          </div>
+          {entityProgress && (
+            <div
+              className={cn(
+                "mt-3 p-3 rounded-lg text-sm",
+                entityProgress.startsWith("Failed") || entityProgress.startsWith("Stopped")
+                  ? "bg-importance-high/10 text-importance-high"
+                  : entityProgress.startsWith("Done") || entityProgress.startsWith("No articles")
+                    ? "bg-importance-low/10 text-importance-low"
+                    : "bg-accent/10 text-accent"
+              )}
+            >
+              <div className="flex items-start gap-2">
+                {entityProgress.startsWith("Failed") || entityProgress.startsWith("Stopped") ? (
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                ) : entityProgress.startsWith("Done") || entityProgress.startsWith("No articles") ? (
+                  <CheckCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                ) : (
+                  <Loader2 className="w-4 h-4 shrink-0 mt-0.5 animate-spin" />
+                )}
+                {entityProgress}
+              </div>
+            </div>
+          )}
         </section>
 
         {/* Manual Trigger */}

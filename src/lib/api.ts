@@ -9,6 +9,7 @@ import type {
   Digest,
   EntityType,
   PipelineResult,
+  EntityBatchResult,
 } from "./types";
 
 async function fetchJSON<T>(url: string, init?: RequestInit): Promise<T> {
@@ -125,4 +126,14 @@ export async function triggerPipeline(): Promise<
   return fetchJSON("/api/pipeline/trigger", {
     method: "POST",
   });
+}
+
+export async function processEntityBatch(): Promise<EntityBatchResult> {
+  return fetchJSON<EntityBatchResult>("/api/entities/process-batch", {
+    method: "POST",
+  });
+}
+
+export async function fetchPendingEntityCount(): Promise<{ pending: number }> {
+  return fetchJSON<{ pending: number }>("/api/entities/pending-count");
 }
