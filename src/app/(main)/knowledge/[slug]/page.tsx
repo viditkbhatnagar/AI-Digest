@@ -1,4 +1,5 @@
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
 import {
   ArrowLeft,
   Brain,
@@ -128,9 +129,9 @@ export default async function KnowledgeDetailPage({
 
         {/* Description */}
         {typedEntry.description && (
-          <p className="text-sm text-muted leading-relaxed mt-3">
-            {typedEntry.description}
-          </p>
+          <div className="prose prose-sm dark:prose-invert prose-headings:text-foreground prose-p:text-muted prose-strong:text-foreground prose-li:text-muted prose-a:text-accent max-w-none mt-3">
+            <ReactMarkdown>{typedEntry.description}</ReactMarkdown>
+          </div>
         )}
 
         {/* Metadata grid */}

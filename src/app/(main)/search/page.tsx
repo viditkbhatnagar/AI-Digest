@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { Search, Sparkles, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { Header } from "@/components/header";
 import { SearchBar } from "@/components/search-bar";
 import { ArticleCard } from "@/components/article-card";
@@ -200,8 +201,8 @@ export default function SearchPage() {
                   AI Research Answer
                 </h3>
               </div>
-              <div className="text-sm text-muted leading-relaxed whitespace-pre-line">
-                {researchAnswer}
+              <div className="prose prose-sm dark:prose-invert prose-headings:text-foreground prose-p:text-muted prose-strong:text-foreground prose-li:text-muted prose-a:text-accent max-w-none">
+                <ReactMarkdown>{researchAnswer}</ReactMarkdown>
               </div>
             </div>
           )}
