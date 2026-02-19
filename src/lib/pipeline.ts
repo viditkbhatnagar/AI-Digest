@@ -20,12 +20,12 @@ import type {
 // ---------------------------------------------------------------------------
 
 const SUMMARIZATION_BATCH_SIZE = 5;
-const SUMMARIZATION_DELAY_MS = 500;
+const SUMMARIZATION_DELAY_MS = 200;
 const DB_URL_CHUNK_SIZE = 100;
 const INSERT_BATCH_SIZE = 20;
 const ENTITY_IMPORTANCE_THRESHOLD = 6;
-const MAX_ARTICLES_PER_RUN = 30;
-const MAX_ENTITY_EXTRACTION_ARTICLES = 10;
+const MAX_ARTICLES_PER_RUN = 10;
+const MAX_ENTITY_EXTRACTION_ARTICLES = 3;
 
 // ---------------------------------------------------------------------------
 // Helpers
