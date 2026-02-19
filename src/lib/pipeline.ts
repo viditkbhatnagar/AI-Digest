@@ -350,11 +350,21 @@ export async function runDailyDigest(): Promise<PipelineResult> {
     errors.push("Editorial intro generation failed");
   }
 
+  // Fetch existing digest to accumulate article_count across multiple runs per day
+  const { data: existingDigest } = await supabase
+    .from("digests")
+    .select("article_count")
+    .eq("date", digestDate)
+    .single();
+
+  const cumulativeArticleCount =
+    (existingDigest?.article_count ?? 0) + articlesStored;
+
   const { error: digestError } = await supabase.from("digests").upsert(
     {
       date: digestDate,
       generated_at: new Date().toISOString(),
-      article_count: articlesStored,
+      article_count: cumulativeArticleCount,
       top_story_id: topStoryId,
       editorial_intro: editorialIntro,
       backlog_count: backlogCount,
